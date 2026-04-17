@@ -2,6 +2,7 @@ package kantseryk.pzks;
 
 import org.junit.jupiter.api.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -87,5 +88,31 @@ class CompanyServiceImplTest {
     void whenSingleCompanyIsNotInListThenReturnOnlyOwnEmployees() {
         long result = companyService.getEmployeeCountForCompanyAndChildren(lawer, list);
         assertEquals(1, result);
+    }
+
+
+    @Test
+    void whenCompaniesListIsNullThenReturnOnlyOwnEmployees() {
+        long result = companyService.getEmployeeCountForCompanyAndChildren(manager, null);
+        assertEquals(4, result);
+    }
+
+    @Test
+    void whenCompaniesListIsEmptyThenReturnOnlyOwnEmployees() {
+        long result = companyService.getEmployeeCountForCompanyAndChildren(manager, List.of());
+        assertEquals(4, result);
+    }
+
+    @Test
+    void whenCompaniesListContainsNullThenIgnoreNullAndCountCorrectly() {
+        List<Company> companiesWithNull = Arrays.asList(main, book, manager, developer, design, null);
+        long result = companyService.getEmployeeCountForCompanyAndChildren(main, companiesWithNull);
+        assertEquals(23, result);
+    }
+
+    @Test
+    void whenAnotherChildHasOneStepToTheTopThenFindTop() {
+        Company result = companyService.getTopLevelParent(manager);
+        Assertions.assertEquals(main, result);
     }
 }
